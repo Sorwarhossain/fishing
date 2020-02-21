@@ -392,4 +392,4 @@ function fishing_change_profile_labels($input) {
     return $input;
 }
 
-remove_action( ‘admin_color_scheme_picker’, ‘admin_color_scheme_picker’ );
+remove_action( 'admin_color_scheme_picker', 'admin_color_scheme_picker' );
