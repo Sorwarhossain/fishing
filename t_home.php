@@ -4,14 +4,25 @@ Template Name: Homepage
 */
 // Getting the header.php
 get_header();
+$page_id = get_queried_object_id();
 ?>
 
+<?php
+if(get_field('enable_home_slider', $page_id)) :
 
+$slider_items = get_field('home_slider_items', $page_id);
+
+if(!empty($slider_items)):
+?>
         <!-- Heroslider Area -->
         <div class="tm-heroslider-area bg-grey">
 
             <div class="tm-heroslider-slider">
 
+            <?php  
+                foreach($slider_items as $slider_item) :
+                $slide_content = $slider_item['slider_content'];
+            ?>
                 <!-- Heroslider Item -->
                 <div class="tm-heroslider">
                     <div class="container">
@@ -19,72 +30,46 @@ get_header();
                             <div class="col-lg-7 col-md-8 order-2 order-md-1">
                                 <div class="tm-heroslider-contentwrapper">
                                     <div class="tm-heroslider-content">
-									    <p>
-										<img src="<?php echo get_template_directory_uri(); ?>/assets/images/logobig.png" alt="logo"><br /><br />
-										Welkom op onze website.
-										</p>
-                                        <a href="contact.html" class="tm-button">Contacteer ons</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-5 col-md-4 order-1 order-md-2">
-                                <div class="tm-heroslider-image">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/heroslider-image-1.png" alt="heroslider image">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--// Heroslider Item -->
+                                    <?php  
+                                    if(!empty($slide_content['logo'])){
+                                        echo sprintf('<img src="%s" alt="logo"><br /><br />', $slide_content['logo']);
+                                    }
+                                    if(!empty($slide_content['title'])){
+                                        echo sprintf('<h1>%s</h1>', $slide_content['title']);
+                                    }
+                                    if(!empty($slide_content['content'])){
+                                        echo sprintf('<div class="slide_content">%s</div>', $slide_content['content']);
+                                    }
 
-                <!-- Heroslider Item -->
-                <div class="tm-heroslider">
-                    <div class="container">
-                        <div class="row align-items-center">
-                            <div class="col-lg-7 col-md-8 order-2 order-md-1">
-                                <div class="tm-heroslider-contentwrapper">
-                                    <div class="tm-heroslider-content">
-                                        <h1>Alles voor de sportvisser</h1>
-                                        <p>Wij produceren Dobbers en Soft balls aan de hoogte kwaliteit.</p>
-                                        <a href="about.html" class="tm-button">Meer info</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-5 col-md-4 order-1 order-md-2">
-                                <div class="tm-heroslider-image">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/heroslider-image-2.png" alt="heroslider image">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--// Heroslider Item -->
+                                    $slide_button = $slide_content['button'];
 
-                <!-- Heroslider Item -->
-                <div class="tm-heroslider">
-                    <div class="container">
-                        <div class="row align-items-center">
-                            <div class="col-lg-7 col-md-8 order-2 order-md-1">
-                                <div class="tm-heroslider-contentwrapper">
-                                    <div class="tm-heroslider-content">
-                                        <h1>Ontdek onze partners</h1>
-                                        <p>Of beter nog: word er zelf één!
-                                         Wij verkopen enkel aan winkels en bedrijven.<br />
-										 Dus particulieren en sportvissers, haast jullie naar één van onze partners en ondervind vandaag nog onze kwaliteit.
-										 </p>
-                                        <a href="partners.html" class="tm-button">Onze partners</a>
+                                    $button_link = !empty($slide_button['link']) ? $slide_button['link'] : '#';
+
+                                    if( !empty($slide_button['label']) ){
+                                        echo sprintf('<a href="%s" class="tm-button">%s</a>', $button_link, $slide_button['label']);
+                                    }
+                                        
+                                    ?>
+ 
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-5 col-md-4 order-1 order-md-2">
+                            <?php
+                            if(!empty($slider_item['slider_image'])) :
+                            ?>
                                 <div class="tm-heroslider-image">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/heroslider-image-3.png" alt="heroslider image">
+                                    <img src="<?php echo $slider_item['slider_image']; ?>" alt="heroslider image">
                                 </div>
+                            <?php endif; ?>
+
                             </div>
                         </div>
                     </div>
                 </div>
                 <!--// Heroslider Item -->
+            <?php endforeach; ?>
+ 
 
             </div>
 
@@ -101,120 +86,148 @@ get_header();
 
         </div>
         <!--// Heroslider Area -->
+<?php endif; endif; ?>
+
+
 
         <!-- Page Content -->
         <main class="page-content">
 
 
+        <?php
+if(get_field('enable_home_about', $page_id)) :
+
+$about_title = get_field('about_title', $page_id);
+$about_subtitle = get_field('about_subtitle', $page_id);
+$about_content = get_field('about_content', $page_id);
+$about_info_list = get_field('about_info_list', $page_id);
+$about_button = get_field('about_button', $page_id);
+$about_right_image = get_field('about_right_image', $page_id);
+?>
             <!-- About Area -->
             <section id="tm-about-area" class="tm-section tm-about-area tm-padding-section-bottom bg-white">
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-6 col-12 order-2 order-lg-1">
                             <div class="tm-about-content tm-scrollanim">
-								<br /><br />
-                                <h6>About Fishing Things</h6>
-                                <h3>Kwaliteit is onze reclame</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras a convallis nisl, at
-                                    aliquam dolor. Morbi in iaculis nunc. Nulla eu mi at velit imperdiet sollicitudin
-                                    sed vel risus. It is a long established fact that a reader will be distracted.</p>
-                                <p>Cras a convallis nisl, at aliquam dolor. Morbi in iaculis nunc. Nulla eumiat velit
-                                    imperdiet sollicitudin sed vel risus. </p>
-                                <ul class="stylish-list-color">
-                                    <li><i class="ion-android-checkmark-circle"></i> One of the reasons why people use
-                                        Lorem Ipsum is because it adjusts very well in
-                                        <i class="ion-android-checkmark-circle"></i> every ocasion.</li>
-                                    <li><i class="ion-android-checkmark-circle"></i> Quisque eleifend lorem ipsum, et
-                                        tempus nulla convallis nec.</li>
-                                    <li><i class="ion-android-checkmark-circle"></i> Suspendisse tempus consequat odio,
-                                        quis tempus augue vulputate at.</li>
-                                </ul>
-                                <a href="about.html" class="tm-button">Meer info</a>
+                                <br /><br />
+                                <?php
+                                    if(!empty($about_title)){
+                                        echo sprintf('<h6>%s</h6>', $about_title);
+                                    }
+                                    if(!empty($about_subtitle)){
+                                        echo sprintf('<h3>%s</h3>', $about_subtitle);
+                                    }
+                                    echo $about_content;
+
+                                    if(!empty($about_info_list)){
+                                        echo '<ul class="stylish-list-color">';
+                                        foreach($about_info_list as $list_item){
+                                            echo sprintf('<li><i class="ion-android-checkmark-circle"></i> %s', $list_item['info_item']);
+                                        }
+                                        echo '</ul>';
+                                    }
+
+                                    if(!empty($about_button['label'])){
+                                        echo sprintf('<a href="%s" class="tm-button">%s</a>', $about_button['link'], $about_button['label']);
+                                    }
+
+                                ?>    
+                                
+                                
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-8 col-12 order-1 order-lg-2">
                             <div class="tm-about-image tm-scrollanim">
-								<br /><br />
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-image.png" alt="about image">
+                                <br/><br/>
+                            <?php
+                                if(!empty($about_right_image)){
+                                    echo sprintf('<img src="%s" alt="About Image">', $about_right_image);
+                                }
+                            ?>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
             <!--// About Area -->
+<?php endif; ?>
 
+
+<?php
+if(get_field('enable_home_products', $page_id)) :
+
+$products_title = get_field('products_title', $page_id);
+$products_subtitle = get_field('products_subtitle', $page_id);
+$product_boxes = get_field('product_box', $page_id);
+
+?>
             <!-- Service Area -->
             <div id="tm-service-area" class="tm-section tm-service-area tm-padding-section-bottom bg-white">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-xl-7 col-lg-8 col-md-9 col-12">
                             <div class="tm-sectiontitle text-center">
-                                <h2>Onze Producten</h2>
+
+                            <?php
+                                if(!empty($products_title)){
+                                    echo sprintf('<h2>%s</h2>', $products_title);
+                                }
+                            ?>
                                 <span class="tm-sectiontitle-divider">
                                     <img src="<?php echo get_template_directory_uri(); ?>/assets/images/icons/icon-divider-img.png" alt="section divider">
                                 </span>
-                                <p>Lorem Ipsum is a latin placeholder text commonly used to fulfill certain areas of
-                                    your website or app where content is not the main concern of the developer.</p>
+                            <?php
+                                if(!empty($products_subtitle)){
+                                    echo sprintf('<p>%s</p>', $products_subtitle);
+                                }
+                            ?>
+                                
                             </div>
                         </div>
                     </div>
                     <div class="row mt-30-reverse">
 
-                        <!-- Single Service -->
-                        <div class="col-lg-4 col-md-6 col-12 mt-30">
-                            <div class="tm-service text-center tm-scrollanim">
-                                <div class="tm-service-inner">
-                                    <div class="tm-service-frontside" data-bgimage="<?php echo get_template_directory_uri(); ?>/assets/images/service-image-1.jpg">
-                                        <h6>Dobbers</h6>
-                                    </div>
-                                    <div class="tm-service-backside">
-                                        <h6>Dobbers</h6>
-                                        <p>Kwaliteitsdobbers</p>
-                                        <a href="producten.html" class="tm-readmore">Lees meer</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--// Single Service -->
+                    <?php
+                        if(!empty($product_boxes)){
+                            foreach($product_boxes as $product_box){ 
+                                $background_image = !empty($product_box['background_image']) ? $product_box['background_image'] : '';
+                                $product_box_title = !empty($product_box['title']) ? $product_box['title'] : '';
+                                $product_box_subtitle = !empty($product_box['subtitle']) ? $product_box['subtitle'] : '';
 
-                        <!-- Single Service -->
-                        <div class="col-lg-4 col-md-6 col-12 mt-30">
-                            <div class="tm-service text-center tm-scrollanim">
-                                <div class="tm-service-inner">
-                                    <div class="tm-service-frontside" data-bgimage="<?php echo get_template_directory_uri(); ?>/assets/images/service-image-2.jpg">
-                                        <h6>Soft Balls</h6>
-                                    </div>
-                                    <div class="tm-service-backside">
-                                        <h6>Soft Balls</h6>
-                                        <p>Soft Balls van de hoogste kwaliteit.</p>
-                                        <a href="producten.html" class="tm-readmore">Lees meer</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--// Single Service -->
+                                $product_box_button = $product_box['button'];
+                            ?>
 
-                        <!-- Single Service -->
-                        <div class="col-lg-4 col-md-6 col-12 mt-30">
-                            <div class="tm-service text-center tm-scrollanim">
-                                <div class="tm-service-inner">
-                                    <div class="tm-service-frontside" data-bgimage="<?php echo get_template_directory_uri(); ?>/assets/images/service-image-3.jpg">
-                                        <h6>Partners</h6>
-                                    </div>
-                                    <div class="tm-service-backside">
-                                        <h6>Partners</h6>
-                                        <p>Wij leveren enkel aan winkels en bedrijven. Bekijk onze partners om onze producten te bestellen.</p>
-                                        <a href="partners.html" class="tm-readmore">Bekijk onze partners</a>
+                            <div class="col-lg-4 col-md-6 col-12 mt-30">
+                                <div class="tm-service text-center tm-scrollanim">
+                                    <div class="tm-service-inner">
+                                        <div class="tm-service-frontside" data-bgimage="<?php echo $background_image; ?>">
+                                            <?php
+                                                echo '<h6>'. $product_box_title .'</h6>';
+                                            ?>
+                                        </div>
+                                        <div class="tm-service-backside">
+                                            <?php
+                                                echo '<h6>'. $product_box_title .'</h6>';
+                                                echo '<p>'. $product_box_subtitle .'</p>';
+                                                if(!empty($product_box_button['label'])){
+                                                    echo sprintf('<a href="%s" class="tm-readmore">%s</a>', $product_box_button['link'], $product_box_button['label']);
+                                                }
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!--// Single Service -->
+
+                            <?php }
+                        }
+                    ?>
 
                     </div>
                 </div>
             </div>
             <!--// Service Area -->
+<?php endif; ?>
 
         </main>
         <!--// Page Content -->

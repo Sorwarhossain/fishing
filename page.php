@@ -15,26 +15,27 @@
 get_header();
 ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+<!-- Page Content -->
+<main class="page-content">
 
-		<?php
-		while ( have_posts() ) :
-			the_post();
+    <!-- Contact Area -->
+    <div class="tm-contact-area tm-section tm-padding-section bg-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+					<?php
+						while(have_posts()){
+							the_post();
+							the_content();
+						}
+					?>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!--// Contact Area -->
 
-			get_template_part( 'template-parts/content', 'page' );
+</main>
+<!--// Page Content -->
 
-			// If comments are open or we have at least one comment, load up the comment template.
-			if ( comments_open() || get_comments_number() ) :
-				comments_template();
-			endif;
-
-		endwhile; // End of the loop.
-		?>
-
-		</main><!-- #main -->
-	</div><!-- #primary -->
-
-<?php
-get_sidebar();
-get_footer();
+<?php get_footer(); ?>

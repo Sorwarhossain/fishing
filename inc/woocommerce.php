@@ -23,248 +23,75 @@ function fishing_woocommerce_setup() {
 }
 add_action( 'after_setup_theme', 'fishing_woocommerce_setup' );
 
-/**
- * WooCommerce specific scripts & stylesheets.
- *
- * @return void
- */
-function fishing_woocommerce_scripts() {
-	wp_enqueue_style( 'fishing-woocommerce-style', get_template_directory_uri() . '/woocommerce.css' );
 
-	$font_path   = WC()->plugin_url() . '/assets/fonts/';
-	$inline_font = '@font-face {
-			font-family: "star";
-			src: url("' . $font_path . 'star.eot");
-			src: url("' . $font_path . 'star.eot?#iefix") format("embedded-opentype"),
-				url("' . $font_path . 'star.woff") format("woff"),
-				url("' . $font_path . 'star.ttf") format("truetype"),
-				url("' . $font_path . 'star.svg#star") format("svg");
-			font-weight: normal;
-			font-style: normal;
-		}';
 
-	wp_add_inline_style( 'fishing-woocommerce-style', $inline_font );
+
+add_action('woocommerce_before_main_content', 'fishing_woocommerce_before_main_content');
+function fishing_woocommerce_before_main_content(){
+	echo '<div class="fishing_shop"><div class="container"><div class="row"><div class="col-md-12">';
 }
-add_action( 'wp_enqueue_scripts', 'fishing_woocommerce_scripts' );
 
-/**
- * Disable the default WooCommerce stylesheet.
- *
- * Removing the default WooCommerce stylesheet and enqueing your own will
- * protect you during WooCommerce core updates.
- *
- * @link https://docs.woocommerce.com/document/disable-the-default-stylesheet/
- */
-add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
-
-/**
- * Add 'woocommerce-active' class to the body tag.
- *
- * @param  array $classes CSS classes applied to the body tag.
- * @return array $classes modified to include 'woocommerce-active' class.
- */
-function fishing_woocommerce_active_body_class( $classes ) {
-	$classes[] = 'woocommerce-active';
-
-	return $classes;
+add_action('woocommerce_after_main_content', 'fishing_woocommerce_after_main_content');
+function fishing_woocommerce_after_main_content(){
+	echo '</div></div></div></div>';
 }
-add_filter( 'body_class', 'fishing_woocommerce_active_body_class' );
 
-/**
- * Products per page.
- *
- * @return integer number of products.
- */
-function fishing_woocommerce_products_per_page() {
-	return 12;
+
+add_filter( 'woocommerce_product_tabs', 'fishing_remove_product_tabs', 99 );
+function fishing_remove_product_tabs( $tabs ) {
+    unset( $tabs['additional_information'] ); 
+    return $tabs;
 }
-add_filter( 'loop_shop_per_page', 'fishing_woocommerce_products_per_page' );
 
-/**
- * Product gallery thumnbail columns.
- *
- * @return integer number of columns.
- */
-function fishing_woocommerce_thumbnail_columns() {
-	return 4;
+
+
+// Replace add to cart button by a linked button to the product in Shop and archives pages
+add_filter( 'woocommerce_loop_add_to_cart_link', 'replace_loop_add_to_cart_button', 10, 2 );
+function replace_loop_add_to_cart_button( $button, $product  ) {
+    // Button text here
+    $button_text = __( "View Product", "woocommerce" );
+
+    return '<a class="button" href="' . $product->get_permalink() . '">' . $button_text . '</a>';
 }
-add_filter( 'woocommerce_product_thumbnails_columns', 'fishing_woocommerce_thumbnail_columns' );
 
-/**
- * Default loop columns on product archives.
- *
- * @return integer products per row.
- */
-function fishing_woocommerce_loop_columns() {
-	return 3;
+
+
+/* ===============================================
+== Customize the edit page =======================
+=================================================*/
+
+// Removing grouped and external post type
+add_filter( 'product_type_selector', 'fishing_remove_grouped_and_external' );
+function fishing_remove_grouped_and_external( $product_types ){
+	unset( $product_types['grouped'] );
+	unset( $product_types['external'] );
+ 
+	return $product_types;
 }
-add_filter( 'loop_shop_columns', 'fishing_woocommerce_loop_columns' );
 
-/**
- * Related Products Args.
- *
- * @param array $args related products args.
- * @return array $args related products args.
- */
-function fishing_woocommerce_related_products_args( $args ) {
-	$defaults = array(
-		'posts_per_page' => 3,
-		'columns'        => 3,
-	);
 
-	$args = wp_parse_args( $defaults, $args );
-
-	return $args;
-}
-add_filter( 'woocommerce_output_related_products_args', 'fishing_woocommerce_related_products_args' );
-
-if ( ! function_exists( 'fishing_woocommerce_product_columns_wrapper' ) ) {
-	/**
-	 * Product columns wrapper.
-	 *
-	 * @return  void
-	 */
-	function fishing_woocommerce_product_columns_wrapper() {
-		$columns = fishing_woocommerce_loop_columns();
-		echo '<div class="columns-' . absint( $columns ) . '">';
+// Removing virtual and downloadable checkbox from product edit page
+function my_remove_product_type_options( $options ) {
+	if ( isset( $options['virtual'] ) ) {
+		unset( $options['virtual'] );
 	}
-}
-add_action( 'woocommerce_before_shop_loop', 'fishing_woocommerce_product_columns_wrapper', 40 );
-
-if ( ! function_exists( 'fishing_woocommerce_product_columns_wrapper_close' ) ) {
-	/**
-	 * Product columns wrapper close.
-	 *
-	 * @return  void
-	 */
-	function fishing_woocommerce_product_columns_wrapper_close() {
-		echo '</div>';
+	if ( isset( $options['downloadable'] ) ) {
+		unset( $options['downloadable'] );
 	}
+
+	return $options;
 }
-add_action( 'woocommerce_after_shop_loop', 'fishing_woocommerce_product_columns_wrapper_close', 40 );
+add_filter( 'product_type_options', 'my_remove_product_type_options' );
 
-/**
- * Remove default WooCommerce wrapper.
- */
-remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
-remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 );
 
-if ( ! function_exists( 'fishing_woocommerce_wrapper_before' ) ) {
-	/**
-	 * Before Content.
-	 *
-	 * Wraps all WooCommerce content in wrappers which match the theme markup.
-	 *
-	 * @return void
-	 */
-	function fishing_woocommerce_wrapper_before() {
-		?>
-		<div id="primary" class="content-area">
-			<main id="main" class="site-main" role="main">
-			<?php
-	}
+function fishing_remove_linked_products($tabs){
+	
+    update_option('testing', $tabs);
+
+    unset($tabs['linked_product']);
+    unset($tabs['advanced']);
+    unset($tabs['marketplace-suggestions']);
+
+    return($tabs);
 }
-add_action( 'woocommerce_before_main_content', 'fishing_woocommerce_wrapper_before' );
-
-if ( ! function_exists( 'fishing_woocommerce_wrapper_after' ) ) {
-	/**
-	 * After Content.
-	 *
-	 * Closes the wrapping divs.
-	 *
-	 * @return void
-	 */
-	function fishing_woocommerce_wrapper_after() {
-			?>
-			</main><!-- #main -->
-		</div><!-- #primary -->
-		<?php
-	}
-}
-add_action( 'woocommerce_after_main_content', 'fishing_woocommerce_wrapper_after' );
-
-/**
- * Sample implementation of the WooCommerce Mini Cart.
- *
- * You can add the WooCommerce Mini Cart to header.php like so ...
- *
-	<?php
-		if ( function_exists( 'fishing_woocommerce_header_cart' ) ) {
-			fishing_woocommerce_header_cart();
-		}
-	?>
- */
-
-if ( ! function_exists( 'fishing_woocommerce_cart_link_fragment' ) ) {
-	/**
-	 * Cart Fragments.
-	 *
-	 * Ensure cart contents update when products are added to the cart via AJAX.
-	 *
-	 * @param array $fragments Fragments to refresh via AJAX.
-	 * @return array Fragments to refresh via AJAX.
-	 */
-	function fishing_woocommerce_cart_link_fragment( $fragments ) {
-		ob_start();
-		fishing_woocommerce_cart_link();
-		$fragments['a.cart-contents'] = ob_get_clean();
-
-		return $fragments;
-	}
-}
-add_filter( 'woocommerce_add_to_cart_fragments', 'fishing_woocommerce_cart_link_fragment' );
-
-if ( ! function_exists( 'fishing_woocommerce_cart_link' ) ) {
-	/**
-	 * Cart Link.
-	 *
-	 * Displayed a link to the cart including the number of items present and the cart total.
-	 *
-	 * @return void
-	 */
-	function fishing_woocommerce_cart_link() {
-		?>
-		<a class="cart-contents" href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View your shopping cart', 'fishing' ); ?>">
-			<?php
-			$item_count_text = sprintf(
-				/* translators: number of items in the mini cart. */
-				_n( '%d item', '%d items', WC()->cart->get_cart_contents_count(), 'fishing' ),
-				WC()->cart->get_cart_contents_count()
-			);
-			?>
-			<span class="amount"><?php echo wp_kses_data( WC()->cart->get_cart_subtotal() ); ?></span> <span class="count"><?php echo esc_html( $item_count_text ); ?></span>
-		</a>
-		<?php
-	}
-}
-
-if ( ! function_exists( 'fishing_woocommerce_header_cart' ) ) {
-	/**
-	 * Display Header Cart.
-	 *
-	 * @return void
-	 */
-	function fishing_woocommerce_header_cart() {
-		if ( is_cart() ) {
-			$class = 'current-menu-item';
-		} else {
-			$class = '';
-		}
-		?>
-		<ul id="site-header-cart" class="site-header-cart">
-			<li class="<?php echo esc_attr( $class ); ?>">
-				<?php fishing_woocommerce_cart_link(); ?>
-			</li>
-			<li>
-				<?php
-				$instance = array(
-					'title' => '',
-				);
-
-				the_widget( 'WC_Widget_Cart', $instance );
-				?>
-			</li>
-		</ul>
-		<?php
-	}
-}
+add_filter('woocommerce_product_data_tabs', 'fishing_remove_linked_products', 99, 1);

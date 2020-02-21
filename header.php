@@ -30,21 +30,9 @@
 
 <body <?php body_class(); ?>>
 
-    <!-- Preloader -->
-	<div class="tm-preloader">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="tm-preloader-logo">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logoloader.png" alt="logo">
-                    </div>
-                    <span class="tm-preloader-progress"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--// Preloader -->
 
+<?php echo get_fishing_preloader(); ?>
+    
 
     <!-- Wrapper -->
     <div id="wrapper" class="wrapper">
@@ -52,47 +40,52 @@
         <!-- Header -->
         <div class="tm-header tm-header-sticky">
 
-            <div class="tm-header-toparea">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-8 col-12">
-                            <ul class="tm-header-info">
-                                <li><i class="ion-ios-telephone"></i>+32 497 64 58 76</li>
-                                <li><a href="mailto:contact@fishingthings.be" onMouseOver="this.style.color='#fff'" onMouseOut="this.style.color='#fff'"><i class="ion-android-mail"></i>contact@fishingthings.be</a></l</ul>
-                        </div>
-                        <div class="col-lg-4 col-12">
-                            <ul class="tm-header-icons">
-                                <li><a href="login-register.html" onMouseOver="this.style.color='#fff'" onMouseOut="this.style.color='#fff'">Log In / Partner worden</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php echo get_fishing_topbar(); ?>
 
             <div class="tm-header-bottomarea">
                 <div class="container">
                     <div class="tm-header-inner">
-                        <a href="index.html" class="tm-header-logo">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.png" alt="malic">
-                        </a>
-                        <nav class="tm-header-nav">
-                            <ul>
-                                <li><a href="index.html">Home</a></li>
-                                <li><a href="about.html">Over ons</a></li>
-                                <li class="tm-header-nav-dropdown"><a href="#">Producten</a>
-                                    <ul>
-                                        <li><a href="producten.html">Dobbers</a></li>
-                                        <li><a href="producten.html">Soft Balls</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="partners.html">Partners</a></li>
-                                <li><a href="contact.html">Contact</a></li>
-                            </ul>
-                        </nav>
+
+                        <?php echo get_fishing_logo(); ?>
+
+                        <?php
+                        wp_nav_menu( array(
+                            'container'         => "nav", 
+                            'container_class'   => "tm-header-nav", 
+                            'theme_location' => 'main-menu'
+                        ) );
+                        ?>
+
                         <div class="tm-mobilenav"></div>
+						<?php if(is_user_logged_in()): ?>
+						<div class="cart_items"><?php echo do_shortcode("[woo_cart_but]"); ?></div>
+                        <?php endif; ?>
                     </div>
+					
                 </div>
             </div>
 
         </div>
         <!--// Header -->
+
+    <?php
+    $page_id = get_queried_object_id();
+    if(get_field('enable_page_banner', $page_id)) :
+    
+    $page_banner_bg = get_field('banner_image', $page_id) ? get_field('banner_image', $page_id) : '';
+
+    ?>
+        <!-- Breadcrumb Area -->
+        <div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="<?php echo $page_banner_bg; ?>"
+            data-white-overlay="2">
+            <div class="container">
+                <div class="tm-breadcrumb">
+                    <h2><?php the_field('title', $page_id); ?></h2>
+                    <ul>
+                        <li><?php the_field('subtitle', $page_id); ?></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--// Breadcrumb Area -->
+    <?php endif; ?>
